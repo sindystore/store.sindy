@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- PWA / Add to Home Screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SNI sindy">
+    <link rel="apple-touch-icon" href="https://s.imgz.io/2026/07/15/DA0D2171-669F-4863-B0AD-A3084C2E881A787a7e4aae484696.png">
+    
+    <title>SNI sindy - Premium Store</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        /* B&W Minimal Theme & Reset */
+        body { background-color: #f9f9f9; color: #000; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+        .bg-primary { background-color: #000; color: #fff; }
+        .text-primary { color: #000; }
+        .border-primary { border-color: #000; }
+        
+        /* สไตล์กรอบเลเซอร์ B&W ขยับได้ */
+        .laser-card { position: relative; border-radius: 16px; overflow: hidden; background: #fff; z-index: 1; transition: transform 0.2s; }
+        .laser-card::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(transparent, rgba(0,0,0,0.8), transparent 30%);
+            animation: rotate 4s linear infinite; z-index: -2;
+        }
+        .laser-card::after {
+            content: ''; position: absolute; inset: 2px; background: #fff; border-radius: 14px; z-index: -1;
+        }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        
+        /* สไตล์อื่นๆ */
+        .hide { display: none !important; }
+        .modal-overlay { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #000; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* ปรับสโครลบาร์ให้มินิมอล */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+    </style>
+</head>
+<body class="antialiased h-screen flex flex-col">
+
+    <!-- In-App Browser Warning -->
+    <div id="inapp-warning" class="hide fixed inset-0 z-50 bg-primary flex flex-col items-center justify-center p-6 text-center">
+        <i class="fa-brands fa-safari text-6xl mb-4 text-white"></i>
+        <h2 class="text-2xl font-bold mb-2">โปรดเปิดใน Safari หรือ Chrome</h2>
+        <p class="text-gray-300 mb-6">เพื่อให้ระบบชำระเงินและดาวน์โหลดแอปทำงานได้สมบูรณ์ และเพื่อเพิ่มลงหน้าจอโฮม</p>
+        <p class="text-sm text-gray-400">iOS: กดไอคอนเข็มทิศขวาล่าง <br> Android: กดจุดสามจุดเลือกเปิดในเบราว์เซอร์</p>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-30">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center border-b-2 border-black">
+            <div class="flex items-center gap-3">
+                <img src="https://s.imgz.io/2026/07/15/DA0D2171-669F-4863-B0AD-A3084C2E881A787a7e4aae484696.png" class="h-10 w-10 rounded-full border border-black object-cover" alt="Logo">
+                <h1 class="text-xl font-bold tracking-tight">SNI sindy</h1>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="openAdmin()" class="text-gray-400 hover:text-black transition"><i class="fa-solid fa-lock"></i></button>
+                <button onclick="toggleCart()" class="relative text-xl text-primary p-2">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span id="cart-badge" class="absolute top-0 right-0 bg-black text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center transform translate-x-1 -translate-y-1">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8 pb-24">
+        <!-- Products Grid -->
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Render by JS -->
+        </div>
+    </main>
+
+    <!-- Cart Overlay -->
+    <div id="cart-modal" class="hide fixed inset-0 z-40 flex justify-end">
+        <div class="modal-overlay absolute inset-0" onclick="toggleCart()"></div>
+        <div class="relative bg-white w-full max-w-md h-full flex flex-col shadow-2xl border-l border-black animate-slide-in">
+            <div class="p-4 border-b border-black flex justify-between items-center bg-black text-white">
+                <h2 class="text-lg font-bold"><i class="fa-solid fa-bag-shopping mr-2"></i> ตะกร้าสินค้า</h2>
+                <button onclick="toggleCart()"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div id="cart-items" class="flex-grow overflow-y-auto p-4 space-y-4"></div>
+            <div class="p-4 border-t border-black bg-gray-50">
+                <div class="flex justify-between text-lg font-bold mb-4">
+                    <span>ยอดรวมทั้งหมด</span>
+                    <span id="cart-total">฿0</span>
+                </div>
+                <button onclick="proceedToCheckout()" class="w-full bg-black text-white py-3 rounded-lg font-bold hover:bg-gray-800 transition flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-check"></i> ยืนยันการสั่งซื้อ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout / Payment Modal -->
+    <div id="checkout-modal" class="hide fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative bg-white w-full max-w-md rounded-xl shadow-2xl border border-black overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b border-black bg-black text-white flex justify-between items-center">
+                <h2 class="font-bold"><i class="fa-solid fa-qrcode mr-2"></i> ชำระเงิน</h2>
+                <button onclick="closeCheckout()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-4">
+                <div class="text-center border-2 border-dashed border-black p-4 rounded-lg">
+                    <img src="https://s.imgz.io/2026/07/15/IMG_75242612165b6fd16c31.jpeg" class="w-48 mx-auto mb-2 rounded-lg" alt="QR Code">
+                    <p class="font-bold text-lg">ร้านค้าออมสินมหาเฮง (คิงแอดส์)</p>
+                    <p class="text-xl font-extrabold mt-2">ยอดโอน: <span id="checkout-total">฿0</span></p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-bold mb-1"><i class="fa-solid fa-envelope"></i> อีเมลสำหรับรับสินค้า</label>
+                    <input type="email" id="customer-email" placeholder="example@email.com" class="w-full border border-black rounded p-2 outline-none focus:ring-2 focus:ring-black">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-bold mb-1"><i class="fa-solid fa-image"></i> แนบสลิปโอนเงิน</label>
+                    <input type="file" id="slip-file" accept="image/*" class="w-full text-sm border border-black rounded p-2 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800">
+                </div>
+            </div>
+            <div class="p-4 border-t border-black">
+                <button id="btn-submit-order" onclick="submitOrder()" class="w-full bg-black text-white py-3 rounded-lg font-bold flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> แจ้งโอนเงิน & รับสินค้า
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receipt-modal" class="hide fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative bg-transparent w-full max-w-sm flex flex-col items-center">
+            <!-- Receipt Capture Area -->
+            <div id="receipt-capture" class="bg-white w-full rounded-none shadow-2xl p-6 relative">
+                <div class="text-center border-b-2 border-black pb-4 mb-4">
+                    <img src="https://s.imgz.io/2026/07/15/DA0D2171-669F-4863-B0AD-A3084C2E881A787a7e4aae484696.png" class="w-16 h-16 mx-auto mb-2 grayscale" alt="Logo">
+                    <h2 class="text-2xl font-bold uppercase tracking-wider">Receipt</h2>
+                    <p class="text-sm font-bold mt-1">SNI SINDY</p>
+                </div>
+                <div class="text-sm mb-4 space-y-1">
+                    <p><strong>Order:</strong> <span id="r-order"></span></p>
+                    <p><strong>Date:</strong> <span id="r-date"></span></p>
+                    <p><strong>Email:</strong> <span id="r-email"></span></p>
+                </div>
+                <div id="r-items" class="border-t border-b border-black py-4 mb-4 text-sm space-y-2"></div>
+                <div class="text-right text-xl font-bold">
+                    Total: <span id="r-total"></span>
+                </div>
+                <div class="text-center mt-6 text-xs text-gray-500 font-bold uppercase tracking-widest">
+                    <i class="fa-solid fa-heart text-black"></i> Thank You <i class="fa-solid fa-heart text-black"></i>
+                </div>
+            </div>
+            <button onclick="downloadReceipt()" class="mt-6 bg-black text-white px-6 py-3 rounded-full font-bold shadow-lg flex items-center gap-2 border-2 border-white">
+                <i class="fa-solid fa-download"></i> บันทึกใบเสร็จ
+            </button>
+            <button onclick="location.reload()" class="mt-4 text-white underline text-sm">ปิด</button>
+        </div>
+    </div>
+
+    <!-- Popup Modal -->
+    <div id="welcome-modal" class="hide fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative bg-white max-w-sm w-full rounded-2xl shadow-2xl border-4 border-black p-6 text-center transform scale-95 transition-all">
+            <h2 class="text-2xl font-bold mb-4"><i class="fa-solid fa-bell"></i> ประกาศร้าน</h2>
+            <p id="welcome-msg" class="mb-6 font-medium text-gray-700"></p>
+            <button onclick="closeWelcome()" class="bg-black text-white px-8 py-2 rounded-full font-bold hover:bg-gray-800"><i class="fa-solid fa-check"></i> เข้าใจแล้ว</button>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script>
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTUq27aThpkP_IedBhdqY-NBQtW0IRD5bN5hzvUVMYyEA8KKm5NOj6x2Cl1Uo1cswkXg/exec'; // ** ใส่ URL เว็บแอปของคุณที่นี่ **
+        
+        let productsData = [];
+        let cart = [];
+        let isSubmitting = false;
+
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", () => {
+            checkInAppBrowser();
+            fetchData();
+        });
+
+        function checkInAppBrowser() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            if (ua.indexOf("Line") > -1 || ua.indexOf("FBAV") > -1 || ua.indexOf("Instagram") > -1) {
+                document.getElementById('inapp-warning').classList.remove('hide');
+            }
+        }
+
+        async function fetchData() {
+            try {
+                // หากยังไม่ได้ใส่ URL ข้ามไปก่อนเพื่อไม่ให้ error แดง
+                if(SCRIPT_URL === 'YOUR_GAS_WEB_APP_URL') return; 
+
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'get_data' })
+                });
+                const data = await res.json();
+                productsData = data.products;
+                
+                // Show Popup
+                if (data.settings && data.settings.popup_msg) {
+                    document.getElementById('welcome-msg').innerText = data.settings.popup_msg;
+                    document.getElementById('welcome-modal').classList.remove('hide');
+                }
+
+                renderProducts();
+            } catch (err) {
+                console.log("Error loading data:", err);
+            }
+        }
+
+        function closeWelcome() {
+            document.getElementById('welcome-modal').classList.add('hide');
+        }
+
+        // ==========================================
+        // RENDER PRODUCTS (LASER CARD)
+        // ==========================================
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+            
+            productsData.forEach(p => {
+                if(p.stock <= 0) return; // ไม่แสดงถ้าหมด
+                
+                const card = document.createElement('div');
+                card.className = 'laser-card p-5 flex flex-col justify-between min-h-[220px]';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold">${p.name}</h3>
+                            <span class="bg-black text-white text-xs px-2 py-1 rounded-full"><i class="fa-solid fa-clock"></i> ${p.duration}</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2" title="${p.details}">${p.details}</p>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-extrabold mb-4">฿${p.price}</div>
+                        <button onclick="addToCart('${p.id}')" class="w-full bg-black text-white py-2 rounded font-bold hover:bg-gray-800 transition shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-1 active:translate-x-1">
+                            <i class="fa-solid fa-cart-plus"></i> เพิ่มลงตะกร้า
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // CART LOGIC
+        // ==========================================
+        function addToCart(id) {
+            const product = productsData.find(p => p.id == id);
+            const existing = cart.find(c => c.id == id);
+            if (existing) {
+                if(existing.qty < product.stock) existing.qty++;
+                else alert('สินค้าในสต๊อกไม่เพียงพอ');
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-badge').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+            
+            const container = document.getElementById('cart-items');
+            container.innerHTML = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                total += item.price * item.qty;
+                container.innerHTML += `
+                    <div class="flex justify-between items-center border border-black p-3 rounded bg-white">
+                        <div>
+                            <p class="font-bold">${item.name}</p>
+                            <p class="text-sm">฿${item.price}</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center border border-black rounded">
+                                <button onclick="changeQty(${index}, -1)" class="px-2 bg-gray-100 hover:bg-gray-200">-</button>
+                                <span class="px-2 font-bold">${item.qty}</span>
+                                <button onclick="changeQty(${index}, 1)" class="px-2 bg-gray-100 hover:bg-gray-200">+</button>
+                            </div>
+                            <button onclick="removeFromCart(${index})" class="text-red-500"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            const totalText = '฿' + total.toLocaleString();
+            document.getElementById('cart-total').innerText = totalText;
+            document.getElementById('checkout-total').innerText = totalText;
+        }
+
+        function changeQty(index, amount) {
+            const item = cart[index];
+            const stock = productsData.find(p => p.id == item.id).stock;
+            if (item.qty + amount > 0 && item.qty + amount <= stock) {
+                item.qty += amount;
+            } else if (item.qty + amount === 0) {
+                cart.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            modal.classList.toggle('hide');
+        }
+
+        // ==========================================
+        // CHECKOUT LOGIC
+        // ==========================================
+        function proceedToCheckout() {
+            if (cart.length === 0) return alert('ตะกร้าว่างเปล่า');
+            toggleCart();
+            document.getElementById('checkout-modal').classList.remove('hide');
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkout-modal').classList.add('hide');
+        }
+
+        async function submitOrder() {
+            if (isSubmitting) return;
+            
+            const email = document.getElementById('customer-email').value;
+            const fileInput = document.getElementById('slip-file');
+            
+            if (!email || !email.includes('@')) return alert('กรุณากรอกอีเมลให้ถูกต้อง');
+            if (fileInput.files.length === 0) return alert('กรุณาแนบสลิปโอนเงิน');
+
+            isSubmitting = true;
+            const btn = document.getElementById('btn-submit-order');
+            btn.innerHTML = '<span class="loader"></span> กำลังตรวจสอบ...';
+
+            try {
+                // อ่านรูปเป็น Base64 (Resize เพื่อไม่ให้ไฟล์ใหญ่เกินโควต้า GAS)
+                const file = fileInput.files[0];
+                const base64 = await resizeAndGetBase64(file);
+
+                const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+                const payload = {
+                    action: 'checkout',
+                    email: email,
+                    total: total,
+                    items: cart.map(i => ({ id: i.id, name: i.name, qty: i.qty, price: i.price })),
+                    slipBase64: base64
+                };
+
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    showReceipt(data.orderId, data.date, email, total);
+                    cart = [];
+                    updateCartUI();
+                    closeCheckout();
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + data.message);
+                }
+            } catch (err) {
+                alert('ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่');
+            } finally {
+                isSubmitting = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> แจ้งโอนเงิน & รับสินค้า';
+            }
+        }
+
+        function resizeAndGetBase64(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 800;
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.6)); // ย่อขนาดเพื่อส่งผ่านไว
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ==========================================
+        // RECEIPT (B&W MINIMAL)
+        // ==========================================
+        function showReceipt(orderId, date, email, total) {
+            document.getElementById('r-order').innerText = orderId;
+            document.getElementById('r-date').innerText = date;
+            document.getElementById('r-email').innerText = email;
+            
+            const rItems = document.getElementById('r-items');
+            rItems.innerHTML = '';
+            cart.forEach(item => {
+                rItems.innerHTML += `
+                    <div class="flex justify-between">
+                        <span>${item.qty}x ${item.name}</span>
+                        <span>฿${item.price * item.qty}</span>
+                    </div>
+                `;
+            });
+            document.getElementById('r-total').innerText = '฿' + total;
+            document.getElementById('receipt-modal').classList.remove('hide');
+        }
+
+        function downloadReceipt() {
+            const el = document.getElementById('receipt-capture');
+            html2canvas(el, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Receipt_${document.getElementById('r-order').innerText}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        // ==========================================
+        // ADMIN MOCK (สำหรับเข้าจัดการหลังบ้าน)
+        // ==========================================
+        function openAdmin() {
+            const pass = prompt('รหัสผ่านแอดมิน:');
+            if(pass === '0000s') {
+                alert('ระบบหลังบ้านกรุณาจัดการผ่าน Google Sheet ที่ผูกไว้เพื่อความรวดเร็วและปลอดภัย (เพิ่ม/ลด/ลบ สินค้าในชีต Products ได้เลย)');
+                // โค้ดส่วนจัดการหลังบ้านแบบเต็ม สามารถต่อยอดโดยสร้างหน้าต่าง Modal จัดการแบบเดียวกับตะกร้าได้
+            } else if (pass) {
+                alert('รหัสผ่านผิด');
+            }
+        }
+    </script>
+</body>
+</html>
