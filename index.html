@@ -20,8 +20,8 @@
         .bg-primary { background-color: #000; color: #fff; }
         .text-primary { color: #000; }
         
-        /* เลเซอร์อารมณ์ขาวดำ */
-        .laser-card { position: relative; border-radius: 16px; overflow: hidden; background: #fff; z-index: 1; transition: transform 0.2s; display: flex; flex-direction: column; }
+        /* สไตล์กรอบเลเซอร์ */
+        .laser-card { position: relative; border-radius: 16px; overflow: hidden; background: #fff; z-index: 1; transition: transform 0.2s; display: flex; flex-direction: column; border: 1px solid #e5e7eb; }
         .laser-card::before {
             content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             background: conic-gradient(transparent, rgba(0,0,0,0.8), transparent 30%);
@@ -39,17 +39,15 @@
         
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-
-        /* ให้รูปปกสินค้าพอดีและสวยงาม */
         .product-img { width: 100%; height: 160px; object-fit: cover; border-bottom: 2px solid #000; border-top-left-radius: 14px; border-top-right-radius: 14px; }
     </style>
 </head>
 <body class="antialiased h-screen flex flex-col relative">
 
     <!-- Loading Screen (Full page) -->
-    <div id="main-loader" class="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center">
+    <div id="main-loader" class="fixed inset-0 z-[150] bg-white flex flex-col items-center justify-center">
         <span class="loader mb-4" style="width: 40px; height: 40px; border-width: 4px;"></span>
-        <p class="font-bold text-lg">กำลังโหลดข้อมูลร้าน...</p>
+        <p class="font-bold text-lg" id="loader-text">กำลังโหลดข้อมูล...</p>
     </div>
 
     <!-- In-App Browser Warning -->
@@ -235,7 +233,7 @@
                     <textarea id="admin-popup-msg" rows="3" class="w-full border-2 border-black rounded p-2"></textarea>
                 </div>
                 <div>
-                    <label class="block font-bold mb-1">URL รูปภาพ Pop-up (ใส่ลิงก์รูป หรือเว้นว่าง)</label>
+                    <label class="block font-bold mb-1">URL รูปภาพ Pop-up (เว้นว่างได้)</label>
                     <input type="text" id="admin-popup-img" class="w-full border-2 border-black rounded p-2">
                 </div>
                 <button onclick="saveAdminSettings()" class="w-full bg-black text-white py-3 rounded font-bold"><i class="fa-solid fa-save"></i> บันทึกการตั้งค่า</button>
@@ -247,21 +245,21 @@
     <div id="product-form-modal" class="hide fixed inset-0 z-[120] flex items-center justify-center p-4">
         <div class="modal-overlay absolute inset-0"></div>
         <div class="relative bg-white w-full max-w-md rounded-xl shadow-2xl border-2 border-black p-6 flex flex-col max-h-[90vh] overflow-y-auto">
-            <h2 class="text-xl font-bold mb-4 border-b-2 border-black pb-2" id="form-title">เพิ่มสินค้า</h2>
+            <h2 class="text-xl font-bold mb-4 border-b-2 border-black pb-2" id="form-title">เพิ่ม/แก้ไขสินค้า</h2>
             <input type="hidden" id="form-id">
             <div class="space-y-3">
-                <div><label class="font-bold text-sm">ชื่อสินค้า</label><input type="text" id="form-name" class="w-full border-2 border-black p-2 rounded"></div>
-                <div><label class="font-bold text-sm">URL รูปภาพสินค้า</label><input type="text" id="form-img" class="w-full border-2 border-black p-2 rounded"></div>
+                <div><label class="font-bold text-sm">ชื่อสินค้า</label><input type="text" id="form-name" class="w-full border-2 border-black p-2 rounded focus:ring-2 focus:ring-black"></div>
+                <div><label class="font-bold text-sm">URL รูปภาพสินค้า</label><input type="text" id="form-img" class="w-full border-2 border-black p-2 rounded focus:ring-2 focus:ring-black"></div>
                 <div class="flex gap-2">
-                    <div class="w-1/2"><label class="font-bold text-sm">ราคา</label><input type="number" id="form-price" class="w-full border-2 border-black p-2 rounded"></div>
-                    <div class="w-1/2"><label class="font-bold text-sm">ระยะเวลา</label><input type="text" id="form-duration" class="w-full border-2 border-black p-2 rounded"></div>
+                    <div class="w-1/2"><label class="font-bold text-sm">ราคา</label><input type="number" id="form-price" class="w-full border-2 border-black p-2 rounded focus:ring-2 focus:ring-black"></div>
+                    <div class="w-1/2"><label class="font-bold text-sm">ระยะเวลา</label><input type="text" id="form-duration" class="w-full border-2 border-black p-2 rounded focus:ring-2 focus:ring-black"></div>
                 </div>
-                <div><label class="font-bold text-sm">รายละเอียด</label><textarea id="form-details" rows="3" class="w-full border-2 border-black p-2 rounded"></textarea></div>
-                <div><label class="font-bold text-sm">จำนวนสต๊อก</label><input type="number" id="form-stock" class="w-full border-2 border-black p-2 rounded"></div>
+                <div><label class="font-bold text-sm">จำนวนสต๊อก</label><input type="number" id="form-stock" class="w-full border-2 border-black p-2 rounded focus:ring-2 focus:ring-black" placeholder="ใส่ตัวเลขเท่านั้น"></div>
+                <div><label class="font-bold text-sm">รายละเอียด</label><textarea id="form-details" rows="4" class="w-full border-2 border-black p-2 rounded focus:ring-2 focus:ring-black" placeholder="พิมพ์รายละเอียดสินค้า..."></textarea></div>
             </div>
             <div class="flex gap-2 mt-6">
-                <button onclick="closeProductForm()" class="w-1/2 bg-white border-2 border-black font-bold py-2 rounded">ยกเลิก</button>
-                <button onclick="saveProductForm()" class="w-1/2 bg-black text-white font-bold py-2 rounded"><i class="fa-solid fa-save"></i> บันทึก</button>
+                <button onclick="closeProductForm()" class="w-1/2 bg-white border-2 border-black font-bold py-2 rounded hover:bg-gray-100">ยกเลิก</button>
+                <button onclick="saveProductForm()" class="w-1/2 bg-black text-white font-bold py-2 rounded hover:bg-gray-800"><i class="fa-solid fa-save"></i> บันทึก</button>
             </div>
         </div>
     </div>
@@ -271,7 +269,7 @@
         // ==========================================
         // CONFIGURATION
         // ==========================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTUq27aThpkP_IedBhdqY-NBQtW0IRD5bN5hzvUVMYyEA8KKm5NOj6x2Cl1Uo1cswkXg/exec'; // ** ใส่ URL เว็บแอป Google Apps Script ที่นี่ **
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTUq27aThpkP_IedBhdqY-NBQtW0IRD5bN5hzvUVMYyEA8KKm5NOj6x2Cl1Uo1cswkXg/exec'; // ** ใส่ URL เว็บแอป Google Apps Script (New Deployment) **
         
         let productsData = [];
         let cart = [];
@@ -299,12 +297,20 @@
                     return;
                 }
 
+                document.getElementById('loader-text').innerText = "กำลังโหลดข้อมูลร้าน...";
+                document.getElementById('main-loader').classList.remove('hide');
+
                 const res = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify({ action: 'get_data' })
                 });
                 const data = await res.json();
-                productsData = data.products;
+
+                if (data.status !== 'success') {
+                    throw new Error(data.message);
+                }
+
+                productsData = data.products || [];
                 
                 // Show Popup 
                 if (data.settings && data.settings.popup_msg) {
@@ -323,7 +329,8 @@
                 renderProducts();
                 document.getElementById('main-loader').classList.add('hide');
             } catch (err) {
-                alert("ไม่สามารถเชื่อมต่อฐานข้อมูลได้");
+                alert("ไม่สามารถเชื่อมต่อฐานข้อมูลได้: " + err.message);
+                document.getElementById('main-loader').classList.add('hide');
             }
         }
 
@@ -492,7 +499,7 @@
                 if (data.status === 'success') {
                     showReceipt(data.orderId, data.date, email, total);
                     cart = []; updateCartUI(); closeCheckout();
-                } else alert('เกิดข้อผิดพลาด: ' + data.message);
+                } else alert('เกิดข้อผิดพลาดในการสั่งซื้อ: ' + data.message);
             } catch (err) {
                 alert('ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่');
             } finally {
@@ -600,17 +607,17 @@
             list.innerHTML = '';
             productsData.forEach(p => {
                 list.innerHTML += `
-                    <div class="border-2 border-black p-4 rounded flex justify-between items-center bg-gray-50">
+                    <div class="border-2 border-black p-4 rounded flex flex-col md:flex-row justify-between items-start md:items-center bg-gray-50 gap-4">
                         <div class="flex items-center gap-4">
                             <img src="${p.image || 'https://via.placeholder.com/50'}" class="w-16 h-16 object-cover border border-black rounded">
                             <div>
                                 <h4 class="font-bold text-lg">${p.name}</h4>
-                                <p class="text-sm">ราคา: ฿${p.price} | สต๊อก: ${p.stock}</p>
+                                <p class="text-sm">ราคา: ฿${p.price} | <i class="fa-solid fa-box text-gray-500"></i> สต๊อก: <span class="font-bold">${p.stock}</span></p>
                             </div>
                         </div>
-                        <div class="flex flex-col gap-2">
-                            <button onclick="editProduct('${p.id}')" class="bg-black text-white px-4 py-1 rounded text-sm font-bold"><i class="fa-solid fa-pen"></i> แก้ไข</button>
-                            <button onclick="deleteProduct('${p.id}')" class="bg-white border-2 border-black text-black px-4 py-1 rounded text-sm font-bold hover:bg-red-50 hover:border-red-600 hover:text-red-600 transition"><i class="fa-solid fa-trash"></i> ลบ</button>
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <button onclick="editProduct('${p.id}')" class="flex-1 bg-black text-white px-4 py-2 rounded text-sm font-bold shadow hover:bg-gray-800"><i class="fa-solid fa-pen"></i> แก้ไข</button>
+                            <button onclick="deleteProduct('${p.id}')" class="flex-1 bg-white border-2 border-black text-black px-4 py-2 rounded text-sm font-bold hover:bg-red-50 hover:border-red-600 hover:text-red-600 transition"><i class="fa-solid fa-trash"></i> ลบ</button>
                         </div>
                     </div>
                 `;
@@ -620,7 +627,7 @@
         function openProductForm(id = null) {
             if (id) {
                 const p = productsData.find(x => x.id == id);
-                document.getElementById('form-title').innerText = 'แก้ไขสินค้า';
+                document.getElementById('form-title').innerText = 'แก้ไขรายละเอียดสินค้า';
                 document.getElementById('form-id').value = p.id;
                 document.getElementById('form-name').value = p.name;
                 document.getElementById('form-img').value = p.image || '';
@@ -654,54 +661,92 @@
                 id: document.getElementById('form-id').value,
                 name: document.getElementById('form-name').value,
                 image: document.getElementById('form-img').value,
-                price: document.getElementById('form-price').value,
+                price: parseFloat(document.getElementById('form-price').value) || 0,
                 duration: document.getElementById('form-duration').value,
                 details: document.getElementById('form-details').value,
-                stock: document.getElementById('form-stock').value
+                stock: parseInt(document.getElementById('form-stock').value) || 0
             };
-            if(!p.name || !p.price) return alert('กรุณากรอกชื่อและราคาสินค้า');
+
+            if(!p.name || p.price <= 0) return alert('กรุณากรอกชื่อและราคาสินค้าให้ถูกต้อง');
             
             document.getElementById('product-form-modal').classList.add('hide');
+            document.getElementById('loader-text').innerText = "กำลังบันทึกข้อมูล...";
             document.getElementById('main-loader').classList.remove('hide');
 
-            await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'admin_save_product', password: '0000s', product: p })
-            });
-            
-            // อัปเดตข้อมูลจำลองในเครื่องทันทีเพื่อให้ทำงานไวขึ้น
-            const idx = productsData.findIndex(x => x.id == p.id);
-            if(idx > -1) productsData[idx] = p; else productsData.push(p);
-            
-            renderAdminProducts();
-            document.getElementById('main-loader').classList.add('hide');
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'admin_save_product', password: '0000s', product: p })
+                });
+                const data = await res.json();
+                
+                if(data.status !== 'success') {
+                    alert('บันทึกไม่สำเร็จ: ' + data.message);
+                } else {
+                    // อัปเดตข้อมูลจำลองในเครื่อง
+                    const idx = productsData.findIndex(x => x.id == p.id);
+                    if(idx > -1) productsData[idx] = p; else productsData.push(p);
+                    renderAdminProducts();
+                    alert('บันทึกสินค้าเรียบร้อยแล้ว');
+                }
+            } catch (err) {
+                alert('การเชื่อมต่อล้มเหลว');
+            } finally {
+                document.getElementById('main-loader').classList.add('hide');
+            }
         }
 
         async function deleteProduct(id) {
-            if(!confirm('ยืนยันการลบสินค้านี้?')) return;
+            if(!confirm('ยืนยันการลบสินค้านี้? ข้อมูลและสต๊อกจะหายไปทั้งหมด')) return;
+            
+            document.getElementById('loader-text').innerText = "กำลังลบข้อมูล...";
             document.getElementById('main-loader').classList.remove('hide');
             
-            await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'admin_delete_product', password: '0000s', id: id })
-            });
-
-            productsData = productsData.filter(x => x.id != id);
-            renderAdminProducts();
-            document.getElementById('main-loader').classList.add('hide');
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'admin_delete_product', password: '0000s', id: id })
+                });
+                const data = await res.json();
+                
+                if(data.status !== 'success') {
+                    alert('ลบไม่สำเร็จ: ' + data.message);
+                } else {
+                    productsData = productsData.filter(x => x.id != id);
+                    renderAdminProducts();
+                    alert('ลบสินค้าเรียบร้อย');
+                }
+            } catch (err) {
+                alert('การเชื่อมต่อล้มเหลว');
+            } finally {
+                document.getElementById('main-loader').classList.add('hide');
+            }
         }
 
         async function saveAdminSettings() {
             const msg = document.getElementById('admin-popup-msg').value;
             const img = document.getElementById('admin-popup-img').value;
             
+            document.getElementById('loader-text').innerText = "กำลังอัปเดตตั้งค่า...";
             document.getElementById('main-loader').classList.remove('hide');
-            await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'admin_save_settings', password: '0000s', popup_msg: msg, popup_img: img })
-            });
-            document.getElementById('main-loader').classList.add('hide');
-            alert('บันทึกการตั้งค่าแล้ว');
+            
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'admin_save_settings', password: '0000s', popup_msg: msg, popup_img: img })
+                });
+                const data = await res.json();
+                
+                if(data.status !== 'success') {
+                    alert('บันทึกไม่สำเร็จ: ' + data.message);
+                } else {
+                    alert('บันทึกการตั้งค่าเรียบร้อยแล้ว');
+                }
+            } catch(err) {
+                alert('การเชื่อมต่อล้มเหลว');
+            } finally {
+                document.getElementById('main-loader').classList.add('hide');
+            }
         }
     </script>
 </body>
