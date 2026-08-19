@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+p<!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- PWA Settings สำหรับเพิ่มไปยังหน้าจอโฮมแบบไร้แถบเบราว์เซอร์ -->
+    <!-- PWA Settings -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SNI Sindy">
@@ -13,68 +13,29 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Kanit -->
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Phosphor Icons (ไอคอนสวยงามทดแทน Emoji) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- html2canvas สำหรับเซฟรูปใบเสร็จ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
-        body { 
-            font-family: 'Kanit', sans-serif; 
-            background-color: #f9f9f9; 
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        /* ซ่อน Scrollbar */
+        body { font-family: 'Kanit', sans-serif; background-color: #f9f9f9; -webkit-tap-highlight-color: transparent;}
         ::-webkit-scrollbar { display: none; }
         
-        /* เอฟเฟกต์การ์ดเลเซอร์ ขาว-ดำ */
         .laser-border {
-            position: relative;
-            background: #ffffff;
-            border-radius: 1.2rem;
-            z-index: 1;
-            transition: transform 0.2s ease;
+            position: relative; background: #ffffff; border-radius: 1.2rem; z-index: 1; transition: transform 0.2s ease;
         }
-        .laser-border:active {
-            transform: scale(0.98);
-        }
+        .laser-border:active { transform: scale(0.98); }
         .laser-border::before {
-            content: ""; 
-            position: absolute; 
-            inset: -2px;
-            border-radius: 1.3rem;
+            content: ""; position: absolute; inset: -2px; border-radius: 1.3rem;
             background: linear-gradient(60deg, #000000, #cccccc, #000000, #cccccc);
-            background-size: 300%;
-            z-index: -1;
-            animation: laser 4s linear infinite;
+            background-size: 300%; z-index: -1; animation: laser 4s linear infinite;
         }
-        @keyframes laser {
-            0% { background-position: 0% 0%; }
-            100% { background-position: 100% 100%; }
-        }
+        @keyframes laser { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
 
-        /* Animation การจัดการ Modal */
-        .modal {
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .modal.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .modal-content {
-            transform: translateY(20px) scale(0.95);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .modal.active .modal-content {
-            transform: translateY(0) scale(1);
-        }
-
-        /* Animation หมุนโหลด */
+        .modal { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal.active { opacity: 1; pointer-events: auto; }
+        .modal-content { transform: translateY(20px) scale(0.95); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .modal.active .modal-content { transform: translateY(0) scale(1); }
         .spin-slow { animation: spin 2s linear infinite; }
     </style>
 </head>
@@ -95,7 +56,7 @@
         </div>
     </nav>
 
-    <!-- Main Content Area -->
+    <!-- Main Content -->
     <main class="pt-24 px-4 max-w-5xl mx-auto">
         <div id="loading" class="text-center py-32 flex flex-col items-center justify-center">
             <i class="ph ph-circle-notch spin-slow text-4xl mb-4 text-black"></i>
@@ -107,15 +68,17 @@
         </div>
     </main>
 
-    <!-- ================= MODALS ================= -->
-
     <!-- Modal 1: ดูรายละเอียดสินค้า -->
     <div id="productDetailModal" class="modal fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center sm:p-4">
-        <div class="modal-content bg-white w-full max-w-md h-auto max-h-[85vh] rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl relative flex flex-col">
-            <button onclick="closeModal('productDetailModal')" class="absolute top-5 right-5 text-gray-400 hover:text-black bg-gray-100 p-2 rounded-full"><i class="ph ph-x text-lg"></i></button>
+        <div class="modal-content bg-white w-full max-w-md h-auto max-h-[90vh] rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl relative flex flex-col">
+            <button onclick="closeModal('productDetailModal')" class="absolute top-5 right-5 text-gray-600 hover:text-black bg-white/90 backdrop-blur p-2 rounded-full shadow-sm z-10"><i class="ph ph-x text-lg"></i></button>
             
-            <div class="flex-1 overflow-y-auto mb-4 pr-2">
-                <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6 sm:hidden"></div>
+            <div class="flex-1 overflow-y-auto mb-4 pr-1">
+                <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-4 sm:hidden"></div>
+                
+                <!-- รูปภาพสินค้า 1:1 -->
+                <img id="detailImage" src="" class="w-full aspect-square object-cover rounded-2xl mb-5 shadow-sm border border-gray-100 bg-gray-50" alt="Product Image">
+                
                 <h2 id="detailName" class="text-2xl font-bold mb-2 pr-8 leading-tight"></h2>
                 
                 <div class="flex items-center gap-3 mb-6">
@@ -129,7 +92,7 @@
                 </div>
             </div>
 
-            <div class="pt-4 border-t border-gray-100">
+            <div class="pt-4 border-t border-gray-100 shrink-0">
                 <input type="hidden" id="detailId">
                 <button id="detailAddToCartBtn" onclick="addFromDetail()" class="w-full bg-black text-white py-4 rounded-2xl font-bold flex justify-center items-center gap-2 shadow-lg hover:bg-gray-800 active:scale-95 transition">
                     <i class="ph ph-shopping-cart-simple text-xl"></i> เพิ่มลงตะกร้า
@@ -166,7 +129,7 @@
     <!-- Modal 3: ชำระเงิน (Checkout) -->
     <div id="checkoutModal" class="modal fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="modal-content bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative max-h-[95vh] overflow-y-auto">
-            <button onclick="closeModal('checkoutModal')" class="absolute top-4 right-4 text-gray-400 hover:text-black bg-gray-100 p-2 rounded-full"><i class="ph ph-x"></i></button>
+            <button onclick="closeModal('checkoutModal')" class="absolute top-4 right-4 text-gray-400 hover:text-black bg-gray-100 p-2 rounded-full z-10"><i class="ph ph-x"></i></button>
             
             <div class="text-center mb-6 mt-2">
                 <h2 class="text-2xl font-bold">สแกนชำระเงิน</h2>
@@ -209,7 +172,7 @@
         </div>
     </div>
 
-    <!-- Modal 4: ใบเสร็จน่ารัก (แจ้งเตือนส่งอีเมล) -->
+    <!-- Modal 4: ใบเสร็จ -->
     <div id="receiptModal" class="modal fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="modal-content bg-white w-full max-w-sm rounded-[2rem] p-6 shadow-2xl text-center flex flex-col items-center">
             <div class="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mb-4 shadow-lg shadow-black/30">
@@ -219,29 +182,20 @@
             <p class="text-sm text-gray-500 mb-6 font-medium">เราได้ส่ง <span class="text-red-500 font-bold">ข้อมูลสินค้า</span> ไปที่อีเมลของคุณเรียบร้อยแล้ว</p>
             
             <div id="receiptCard" class="bg-white border-2 border-gray-100 w-full rounded-3xl p-6 mb-6 text-left relative overflow-hidden shadow-sm">
-                <!-- ลายน้ำ -->
                 <div class="absolute -top-6 -right-6 opacity-5"><i class="ph ph-shopping-bag text-9xl"></i></div>
-                
                 <div class="flex flex-col items-center border-b-2 border-dashed border-gray-200 pb-4 mb-4">
                     <img src="https://s.imgz.io/2026/07/15/DA0D2171-669F-4863-B0AD-A3084C2E881A787a7e4aae484696.png" class="w-12 h-12 rounded-full border border-gray-200 mb-2" alt="Logo">
                     <p class="font-bold text-lg tracking-wide">SNI Sindy</p>
                     <p class="text-xs text-gray-400 font-medium">ใบเสร็จรับเงิน</p>
                 </div>
-                
                 <div class="flex justify-between text-xs text-gray-500 mb-4">
                     <span id="receiptDate"></span>
                     <span id="receiptOrderNo"></span>
                 </div>
-
                 <div id="receiptItems" class="space-y-3 text-sm mb-4 min-h-[4rem]"></div>
-                
                 <div class="pt-4 border-t-2 border-dashed border-gray-200 flex justify-between items-center">
                     <span class="text-gray-500 font-medium text-sm">ยอดชำระสุทธิ</span>
                     <span id="receiptTotal" class="text-xl font-bold text-black">0 ฿</span>
-                </div>
-                
-                <div class="mt-6 text-center text-[10px] text-gray-400">
-                    <p>ขอบคุณที่ใช้บริการ SNI Sindy Premium</p>
                 </div>
             </div>
 
@@ -252,7 +206,7 @@
         </div>
     </div>
 
-    <!-- Modal 5: แจ้งเตือน Pop-up เมื่อเข้าเว็บ -->
+    <!-- Modal 5: แจ้งเตือน Pop-up -->
     <div id="infoPopup" class="modal fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="modal-content bg-white w-full max-w-sm rounded-[2rem] p-6 shadow-2xl text-center relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-black"></div>
@@ -273,7 +227,6 @@
         </div>
         
         <div class="flex-1 overflow-y-auto">
-            <!-- แท็บเมนู -->
             <div class="flex border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
                 <button onclick="switchAdminTab('products')" id="tab-products" class="flex-1 py-4 font-bold text-center border-b-2 border-black text-black text-sm">สินค้าและสต๊อก</button>
                 <button onclick="switchAdminTab('settings')" id="tab-settings" class="flex-1 py-4 font-bold text-center border-b-2 border-transparent text-gray-400 text-sm">การตั้งค่าแจ้งเตือน</button>
@@ -289,6 +242,12 @@
                         <div>
                             <label class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1 block">ชื่อบริการ / แอป</label>
                             <input type="text" id="adminName" placeholder="เช่น YouTube Premium" class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-black outline-none transition">
+                        </div>
+
+                        <!-- เพิ่มช่องใส่ลิงก์รูปภาพ -->
+                        <div>
+                            <label class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1 block">ลิงก์รูปภาพสินค้า (แนะนำสัดส่วน 1:1 หรือ 500x500px)</label>
+                            <input type="url" id="adminImageUrl" placeholder="https://..." class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-black outline-none transition">
                         </div>
                         
                         <div class="grid grid-cols-2 gap-4">
@@ -308,7 +267,6 @@
                                 <span class="text-[10px] bg-black text-white px-2 py-0.5 rounded-full" id="adminStockCountBadge">จำนวน: 0 ออเดอร์</span>
                             </label>
                             <textarea id="adminStockData" oninput="updateAdminStockCount()" placeholder="email@gmail.com : Password123\nhttps://ลิงก์เข้าใช้งาน.com/12345\n(ใส่ข้อมูล 1 บรรทัด = 1 ออเดอร์)" class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-black outline-none transition h-32 resize-none font-mono text-sm leading-relaxed" style="white-space: pre; overflow-wrap: normal; overflow-x: scroll;"></textarea>
-                            <p class="text-[10px] text-gray-500 mt-1">* ระบบจะนำข้อมูลบรรทัดบนสุดส่งเข้าอีเมลลูกค้าอัตโนมัติเมื่อทำการสั่งซื้อสำเร็จ</p>
                         </div>
                         
                         <div>
@@ -335,8 +293,6 @@
             <div id="adminTabSettings" class="p-4 space-y-6 max-w-3xl mx-auto hidden">
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                     <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="ph ph-megaphone"></i> ตั้งค่าแจ้งเตือน (Pop-up)</h3>
-                    <p class="text-xs text-gray-500 mb-4">ข้อความนี้จะแสดงให้ลูกค้าเห็นเมื่อเปิดเว็บไซต์ครั้งแรก</p>
-                    
                     <div class="space-y-4">
                         <div>
                             <label class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1 block">ข้อความแจ้งเตือน</label>
@@ -345,7 +301,6 @@
                         <div>
                             <label class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1 block">ลิงก์รูปภาพประกอบ (URL)</label>
                             <input type="url" id="adminPopupImg" placeholder="https://..." class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-black outline-none transition">
-                            <p class="text-[10px] text-gray-400 mt-1">* หากไม่มีรูปภาพให้เว้นว่างไว้ได้เลยครับ</p>
                         </div>
                         <button onclick="saveAdminSettings(this)" class="w-full bg-black text-white py-3 mt-2 rounded-xl font-bold hover:bg-gray-800 shadow-md transition flex items-center justify-center gap-2">
                             <i class="ph ph-floppy-disk text-lg"></i> บันทึกการตั้งค่า
@@ -358,8 +313,8 @@
 
     <!-- ================= JAVASCRIPT ================= -->
     <script>
-        // !! สำคัญมาก !! เปลี่ยน URL เป็น Web App URL อันล่าสุดที่คุณทำการ Deploy ออกมาใหม่
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzUhQykzzyIDb7f_PNyvu3fzcOTOABP0rVlr873ZE6zbuY9YiWPeAP7Yi5q825fy3EXSA/exec'; 
+        // !! สำคัญมาก !! เปลี่ยน URL เป็น Web App URL อันล่าสุดของคุณ
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbyQweZu2ig2Rx6CMd6FumI389F951ZXLOHX_d7Myihz46ZE31TnqUjd6SMPAutDsNWTzA/exec'; 
         
         // ================= ข้อมูล (State) =================
         let products = [];
@@ -367,16 +322,14 @@
         let settings = {};
         let slipBase64 = null;
         let adminPinCode = '';
-        let adminFullProducts = []; // สำหรับเก็บข้อมูลรวมไอดีพาสเวิร์ดในฝั่งหลังบ้าน
+        let adminFullProducts = []; 
 
-        // ================= เริ่มทำงาน (Initialization) =================
         window.onload = () => {
             checkInAppBrowser();
             generatePWAManifest();
             fetchData();
         };
 
-        // สร้าง PWA ให้อัตโนมัติ (เพิ่มเป็นแอปได้โดยไม่ต้องใช้ไฟล์ภายนอก)
         function generatePWAManifest() {
             const manifest = {
                 "name": "SNI Sindy Premium",
@@ -432,12 +385,20 @@
                     ? `<span class="text-[10px] font-bold bg-red-100 text-red-600 px-2 py-1 rounded-md flex items-center gap-1"><i class="ph ph-warning-circle"></i> หมด</span>` 
                     : `<span class="text-[10px] font-bold bg-gray-100 px-2 py-1 rounded-md">เหลือ ${stock}</span>`;
                 
+                // รูปภาพ หากไม่มีจะแสดงภาพ Default
+                const imgSource = p.imageUrl ? p.imageUrl : 'https://placehold.co/500x500/f3f4f6/a1a1aa?text=No+Image';
+
                 grid.innerHTML += `
                 <div class="laser-border cursor-pointer group" onclick="openProductDetail('${p.id}')">
-                    <div class="bg-white rounded-[1.1rem] p-5 h-full flex flex-col justify-between transition group-hover:bg-gray-50/50">
+                    <div class="bg-white rounded-[1.1rem] p-4 h-full flex flex-col justify-between transition group-hover:bg-gray-50/50">
                         <div>
-                            <div class="flex justify-between items-start mb-3 gap-2">
-                                <h3 class="text-lg font-bold leading-tight text-gray-900">${p.name}</h3>
+                            <!-- แสดงรูปภาพสินค้า (ปรับให้เป็นจตุรัส 1:1) -->
+                            <div class="w-full aspect-square bg-gray-50 rounded-xl mb-4 overflow-hidden border border-gray-100 relative">
+                                <img src="${imgSource}" alt="${p.name}" class="w-full h-full object-cover">
+                            </div>
+                            
+                            <div class="flex justify-between items-start mb-2 gap-2">
+                                <h3 class="text-lg font-bold leading-tight text-gray-900 line-clamp-2">${p.name}</h3>
                                 ${stockBadge}
                             </div>
                             <div class="flex items-center gap-1 text-sm text-gray-500 mb-3 font-medium"><i class="ph ph-clock"></i> <span>${p.duration}</span></div>
@@ -458,6 +419,7 @@
 
             const outOfStock = (parseInt(product.stock) || 0) <= 0;
 
+            document.getElementById('detailImage').src = product.imageUrl ? product.imageUrl : 'https://placehold.co/500x500/f3f4f6/a1a1aa?text=No+Image';
             document.getElementById('detailName').innerText = product.name;
             document.getElementById('detailPrice').innerText = `${product.price} ฿`;
             document.getElementById('detailDuration').querySelector('span').innerText = product.duration;
@@ -498,7 +460,6 @@
             }
             updateCartUI();
             
-            // เอฟเฟกต์ปุ่ม
             const btn = document.getElementById(`btn-add-${id}`);
             if(btn) {
                 const ogHTML = btn.innerHTML;
@@ -589,12 +550,11 @@
         // ================= ระบบชำระเงิน =================
         function openCheckout() {
             if (cart.length === 0) return;
-            toggleCart(); // ปิดตะกร้า
+            toggleCart(); 
             
             const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             document.getElementById('checkoutTotalAmount').innerText = total.toLocaleString();
             
-            // รีเซ็ตฟอร์มแนบสลิปและอีเมล
             document.getElementById('customerEmail').value = '';
             slipBase64 = null;
             document.getElementById('slipPreview').classList.add('hidden');
@@ -603,7 +563,6 @@
             document.getElementById('checkoutModal').classList.add('active');
         }
 
-        // ลากวางสลิป
         const dropZone = document.getElementById('dropZone');
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-black', 'bg-gray-100'); });
         dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('border-black', 'bg-gray-100'); });
@@ -656,7 +615,6 @@
                     closeModal('checkoutModal');
                     buildReceipt(result.data.orderId, total, cart);
                     
-                    // เคลียร์ตะกร้าและดึงข้อมูลสต๊อกล่าสุด
                     cart = [];
                     updateCartUI();
                     fetchData(); 
@@ -700,7 +658,7 @@
             btn.innerHTML = `<i class="ph ph-circle-notch spin-slow text-xl"></i> กำลังสร้างรูปภาพ...`;
             
             try {
-                await new Promise(r => setTimeout(r, 400)); // ให้เวลาฟอนต์เรนเดอร์เล็กน้อย
+                await new Promise(r => setTimeout(r, 400));
                 const canvas = await html2canvas(card, { 
                     scale: 3, 
                     backgroundColor: '#ffffff',
@@ -754,7 +712,6 @@
             }
         }
 
-        // โหลดข้อมูลสินค้าแบบเห็นไอดีพาสเวิร์ดเต็มๆ
         async function fetchAdminProducts() {
             document.getElementById('adminProductList').innerHTML = '<div class="text-center py-6 text-gray-500"><i class="ph ph-circle-notch spin-slow text-3xl"></i></div>';
             try {
@@ -795,7 +752,6 @@
             }
         }
 
-        // นับจำนวนบรรทัดของสต๊อกแบบเรียลไทม์
         function updateAdminStockCount() {
             const text = document.getElementById('adminStockData').value;
             const count = text.split('\n').filter(l => l.trim() !== '').length;
@@ -816,16 +772,19 @@
                 const count = sStr.split('\n').filter(l => l.trim() !== '').length;
                 const stockUI = count > 0 ? `<span class="text-green-600 font-bold">${count} ออเดอร์</span>` : `<span class="text-red-500 font-bold">หมด</span>`;
                 
-                // ใช้ encodeURIComponent เพื่อป้องกันปัญหาตอนส่ง String เข้าฟังก์ชัน
                 const encodedProduct = encodeURIComponent(JSON.stringify(p));
+                const miniImg = p.imageUrl ? `<img src="${p.imageUrl}" class="w-10 h-10 object-cover rounded-md border border-gray-200">` : `<div class="w-10 h-10 bg-gray-100 rounded-md border border-gray-200 flex items-center justify-center"><i class="ph ph-image text-gray-400"></i></div>`;
 
                 list.innerHTML += `
                 <div class="bg-white p-4 rounded-xl border border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div class="flex-1 w-full overflow-hidden">
-                        <p class="font-bold text-gray-900 truncate">${p.name}</p>
-                        <p class="text-xs text-gray-500 mt-1">สต๊อก: ${stockUI} | ราคา: <span class="font-bold text-black">${p.price} ฿</span></p>
+                    <div class="flex items-center gap-3 flex-1 w-full overflow-hidden">
+                        ${miniImg}
+                        <div class="overflow-hidden">
+                            <p class="font-bold text-gray-900 truncate">${p.name}</p>
+                            <p class="text-xs text-gray-500 mt-1">สต๊อก: ${stockUI} | ราคา: <span class="font-bold text-black">${p.price} ฿</span></p>
+                        </div>
                     </div>
-                    <div class="flex gap-2 w-full sm:w-auto">
+                    <div class="flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                         <button onclick="editAdminProduct('${encodedProduct}')" class="flex-1 sm:flex-none p-2 bg-gray-100 text-black rounded-lg hover:bg-gray-200 flex justify-center items-center gap-1 text-sm font-bold transition"><i class="ph ph-pencil-simple"></i> แก้ไข</button>
                         <button onclick="deleteAdminProduct('${p.id}', this)" class="flex-1 sm:flex-none p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 flex justify-center items-center gap-1 text-sm font-bold transition"><i class="ph ph-trash"></i> ลบ</button>
                     </div>
@@ -836,6 +795,7 @@
         function clearAdminForm() {
             document.getElementById('adminProdId').value = '';
             document.getElementById('adminName').value = '';
+            document.getElementById('adminImageUrl').value = '';
             document.getElementById('adminDuration').value = '';
             document.getElementById('adminPrice').value = '';
             document.getElementById('adminStockData').value = '';
@@ -847,6 +807,7 @@
             const p = JSON.parse(decodeURIComponent(encodedProductStr));
             document.getElementById('adminProdId').value = p.id;
             document.getElementById('adminName').value = p.name;
+            document.getElementById('adminImageUrl').value = p.imageUrl || '';
             document.getElementById('adminDuration').value = p.duration;
             document.getElementById('adminPrice').value = p.price;
             document.getElementById('adminStockData').value = p.stockData || '';
@@ -856,11 +817,11 @@
             document.getElementById('adminTabProducts').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ================= ระบบดักจับ Error ใหม่ (ป้องกันบันทึกไม่ติด) =================
         async function saveAdminProduct(btn) {
             const data = {
                 id: document.getElementById('adminProdId').value,
                 name: document.getElementById('adminName').value.trim(),
+                imageUrl: document.getElementById('adminImageUrl').value.trim(),
                 duration: document.getElementById('adminDuration').value.trim(),
                 price: document.getElementById('adminPrice').value,
                 stockData: document.getElementById('adminStockData').value,
@@ -879,7 +840,6 @@
                     body: JSON.stringify({ action: 'admin', pin: adminPinCode, subAction: 'save_product', data: data })
                 });
                 
-                // ดักจับกรณี Deploy สิทธิ์ผิด แล้ว Google เด้งหน้า HTML ล็อกอินมาแทน
                 if (!res.ok) throw new Error(`HTTP Error Status: ${res.status}`);
                 
                 const result = await res.json();
@@ -887,7 +847,7 @@
                 if (result.status === 'success') {
                     adminFullProducts = result.data.products; 
                     renderAdminProductsList();
-                    fetchData(); // อัปเดตหน้าร้าน
+                    fetchData(); 
                     clearAdminForm();
                     alert('บันทึกข้อมูลสินค้าสำเร็จ!');
                 } else {
@@ -895,7 +855,7 @@
                 }
             } catch(e) { 
                 console.error(e);
-                alert('เชื่อมต่อล้มเหลว!\n\nสาเหตุที่เป็นไปได้:\n1. ยังไม่ได้ตั้งค่า Deploy เป็น "ทุกคน (Anyone)"\n2. ลืมนำ URL จากการ New deployment มาใส่แทนที่ในไฟล์\n\nรายละเอียดทางเทคนิค: ' + e.message); 
+                alert('เชื่อมต่อล้มเหลว!\n\nสาเหตุที่เป็นไปได้:\n1. ยังไม่ได้ลบแท็บ Products เดิมใน Sheet (ทำให้จำนวนคอลัมน์ไม่ตรง)\n2. ยังไม่ได้ตั้งค่า Deploy เป็น "ทุกคน"\n\nรายละเอียด: ' + e.message); 
             } finally {
                 btn.innerHTML = ogHTML;
                 btn.disabled = false;
